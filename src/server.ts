@@ -4,8 +4,11 @@ import express, {
   type Response,
 } from "express";
 import { Pool } from "pg";
+import dotenv from "dotenv";
 const app: Application = express();
 const port = 5000;
+
+dotenv.config();
 
 // it help to receive data as application/json content type
 app.use(express.json());
@@ -24,8 +27,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // Database connection
 const pool = new Pool({
-  connectionString:
-    "postgresql://neondb_owner:npg_d3GtRMD9AKnW@ep-morning-dust-atlec05s-pooler.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+  connectionString: process.env.DATABASE_URL,
 });
 
 const initDB = async () => {
@@ -102,7 +104,7 @@ app.get("/api/users/:id", async(req: Request, res: Response) => {
         `, [id]); 
 
         if(result.rows.length === 0) {
-            res.status(500).json({
+            res.status(404).json({
             success: false,
             message: "User not found!",
             data: {},
